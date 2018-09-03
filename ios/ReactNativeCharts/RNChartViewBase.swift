@@ -85,7 +85,7 @@ open class RNChartViewBase: UIView, ChartViewDelegate {
         if json["direction"].string != nil {
             legend.direction = BridgeUtils.parseLegendDirection(json["direction"].stringValue)
         }
-                
+        
         if let font = FontUtils.getFont(json) {
             legend.font = font
         }
@@ -237,7 +237,7 @@ open class RNChartViewBase: UIView, ChartViewDelegate {
         if json["position"].string != nil {
             xAxis.labelPosition = BridgeUtils.parseXAxisLabelPosition(json["position"].stringValue)
         }
-
+        
         if json["yOffset"].number != nil {
             xAxis.yOffset = CGFloat(truncating: json["yOffset"].numberValue)
         }
@@ -321,7 +321,7 @@ open class RNChartViewBase: UIView, ChartViewDelegate {
                 if limitLineConfig["limit"].double != nil {
                     
                     let limitLine = ChartLimitLine(limit: limitLineConfig["limit"].doubleValue)
-                  
+                    
                     if limitLineConfig["label"].string != nil {
                         limitLine.label = limitLineConfig["label"].stringValue
                     }
@@ -329,11 +329,11 @@ open class RNChartViewBase: UIView, ChartViewDelegate {
                     if (limitLineConfig["lineColor"].int != nil) {
                         limitLine.lineColor = RCTConvert.uiColor(limitLineConfig["lineColor"].intValue)
                     }
-                  
+                    
                     if (limitLineConfig["valueTextColor"].int != nil) {
                         limitLine.valueTextColor = RCTConvert.uiColor(limitLineConfig["valueTextColor"].intValue)
                     }
-                  
+                    
                     if (limitLineConfig["valueFont"].int != nil) {
                         limitLine.valueFont = NSUIFont.systemFont(ofSize: CGFloat(limitLineConfig["valueFont"].intValue))
                     }
@@ -341,18 +341,18 @@ open class RNChartViewBase: UIView, ChartViewDelegate {
                     if limitLineConfig["lineWidth"].number != nil {
                         limitLine.lineWidth = CGFloat(truncating: limitLineConfig["lineWidth"].numberValue)
                     }
-                  
+                    
                     if limitLineConfig["labelPosition"].string != nil {
                         limitLine.labelPosition = BridgeUtils.parseLimitlineLabelPosition(limitLineConfig["labelPosition"].stringValue);
                     }
-                  
+                    
                     if limitLineConfig["lineDashPhase"].float != nil {
                         limitLine.lineDashPhase = CGFloat(limitLineConfig["lineDashPhase"].floatValue);
                     }
                     if limitLineConfig["lineDashLengths"].arrayObject != nil {
                         limitLine.lineDashLengths = limitLineConfig["lineDashLengths"].arrayObject as? [CGFloat];
                     }
-
+                    
                     axis.addLimitLine(limitLine)
                 }
             }
@@ -400,15 +400,15 @@ open class RNChartViewBase: UIView, ChartViewDelegate {
                 
                 axis.valueFormatter = DefaultAxisValueFormatter(formatter: percentFormatter);
             } else if "date" == valueFormatter.stringValue {
-              let valueFormatterPattern = config["valueFormatterPattern"].stringValue;
-              axis.valueFormatter = ChartDateFormatter(pattern: valueFormatterPattern);
+                let valueFormatterPattern = config["valueFormatterPattern"].stringValue;
+                axis.valueFormatter = ChartDateFormatter(pattern: valueFormatterPattern);
             } else {
-              let customFormatter = NumberFormatter()
-              customFormatter.positiveFormat = valueFormatter.stringValue
-              customFormatter.negativeFormat = valueFormatter.stringValue
-              
-              axis.valueFormatter = DefaultAxisValueFormatter(formatter: customFormatter);
-          }
+                let customFormatter = NumberFormatter()
+                customFormatter.positiveFormat = valueFormatter.stringValue
+                customFormatter.negativeFormat = valueFormatter.stringValue
+                
+                axis.valueFormatter = DefaultAxisValueFormatter(formatter: customFormatter);
+            }
         }
         
         if config["centerAxisLabels"].bool != nil {
@@ -429,18 +429,30 @@ open class RNChartViewBase: UIView, ChartViewDelegate {
         if json["textSize"].float != nil {
             markerFont = markerFont.withSize(CGFloat(json["textSize"].floatValue))
         }
-        
-        
-        // TODO fontFamily, fontStyle
-        
-        let balloonMarker = BalloonMarker(
-            color: RCTConvert.uiColor(json["markerColor"].intValue),
-            font: markerFont,
-            textColor: RCTConvert.uiColor(json["textColor"].intValue))
-        chart.marker = balloonMarker
-        
-        balloonMarker.chartView = chart
-        
+
+        switch (json["markerType"].string) {
+        case "circle":
+            let marker = CircleMarker(
+                color: RCTConvert.uiColor(json["markerColor"].intValue),
+                strokeColor: RCTConvert.uiColor(json["markerStrokeColor"].intValue),
+                size: CGSize(
+                    width: json["markerSize"].intValue,
+                    height: json["markerSize"].intValue
+                ),
+                strokeSize: json["markerStrokeSize"].intValue
+            )
+            chart.marker = marker
+            marker.chartView = chart
+
+        default:
+            let marker = BalloonMarker(
+                color: RCTConvert.uiColor(json["markerColor"].intValue),
+                font: markerFont,
+                textColor: RCTConvert.uiColor(json["textColor"].intValue)
+            )
+            chart.marker = marker
+            marker.chartView = chart
+        }
     }
     
     func setHighlights(_ config: NSArray) {
