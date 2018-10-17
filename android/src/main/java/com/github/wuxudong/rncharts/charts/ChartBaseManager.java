@@ -27,7 +27,7 @@ import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.wuxudong.rncharts.data.DataExtract;
-import com.github.wuxudong.rncharts.markers.RNRectangleMarkerView;
+import com.github.wuxudong.rncharts.markers.RNCircleMarkerView;
 import com.github.wuxudong.rncharts.utils.BridgeUtils;
 import com.github.wuxudong.rncharts.utils.TypefaceUtils;
 
@@ -266,27 +266,8 @@ public abstract class ChartBaseManager<T extends Chart, U extends Entry> extends
             return;
         }
 
-        RNRectangleMarkerView marker = new RNRectangleMarkerView(chart.getContext());
+        RNCircleMarkerView marker = new RNCircleMarkerView(chart.getContext());
         marker.setChartView(chart);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP &&
-                BridgeUtils.validate(propMap, ReadableType.Number, "markerColor")) {
-            marker.getTvContent()
-                    .setBackgroundTintList(
-                            ColorStateList.valueOf(propMap.getInt("markerColor"))
-                    );
-        }
-
-        if (BridgeUtils.validate(propMap, ReadableType.Number, "digits")) {
-            marker.setDigits(propMap.getInt("digits"));
-        }
-
-        if (BridgeUtils.validate(propMap, ReadableType.Number, "textColor")) {
-            marker.getTvContent().setTextColor(propMap.getInt("textColor"));
-        }
-        if (BridgeUtils.validate(propMap, ReadableType.Number, "textSize")) {
-            marker.getTvContent().setTextSize(propMap.getInt("textSize"));
-        }
 
         chart.setMarker(marker);
     }
